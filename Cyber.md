@@ -305,7 +305,7 @@ Some other important instructions:
 - andq source, destination: destination = destination & source
 - orq source, destination: destination = destination | source
 
-### Disassembly rools for .NETFramework applications
+### Disassembly tools for .NETFramework applications
 - ILSpy
 - Dotpeek
 
@@ -329,12 +329,14 @@ Some other important instructions:
 - NFS enumeration tool: NFS-Common
 - mount: `sudo mount -t nfs IP:share /tmp/mount/ -nolock`
 - Show the NFS server's export list: `showmount -e 10.10.180.248`
+- For example of exploiting an NFS drive if root-squashing is disabled: `https://tryhackme.com/room/networkservices2`
+
+### SMTP
+- Enumerate with Metasploit: `auxiliary/scanner/smtp/smtp_version`
+- Useful tool without using Metasploit: `smtp-user-enum`
 
 ### Alternate Data Stream (hide .exe in .exe)
 - scan malicious EXE in Powershell: `c:\Tools\strings64.exe -accepteula file.exe`
 - `-Stream` in the output can relate to ADS
 - view ADS using Powershell: `Get-Item -Path file.exe -Stream *`
 - execute hidden EXE stream: `wmic process call create $(Resolve-Path file.exe:streamname)`
-
-### Test
-- I am adding these extra lines.
