@@ -168,8 +168,10 @@
 - `uname -a`
 - `sudo -l`
 - `whoami`
-- show our shell: `echo $0`
+- show distrubution version:`lsb_release -a`
+- show current shell: `echo $0`
 - find SSH keys: `find / -name id_rsa 2> /dev/null`
+- show host MOTD: `cat /etc/update-motd.d/00-header`
 
 ### find SUID bit Linux
 - `find / -perm -u=s -type f 2>/dev/null`
@@ -373,6 +375,12 @@ Some other important instructions:
 - dump (password) hashes: `auxiliary/scanner/mysql/mysql_hashdump`
 - enumerate manually: `https://nmap.org/nsedoc/scripts/mysql-enum.html`
 - enumerate manually: `https://www.exploit-db.com/exploits/23081`
+
+### SQLite (flat-file databases)
+- open database: `sqlite3 filename.db`
+- show tables: `.tables`
+- show table info: `PRAGMA table_info(customers);`
+- drop all table info: `SELECT * FROM customers;`
 
 ### Alternate Data Stream (hide .exe in .exe)
 - scan malicious EXE in Powershell: `c:\Tools\strings64.exe -accepteula file.exe`
