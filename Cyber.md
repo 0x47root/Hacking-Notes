@@ -174,7 +174,7 @@
 
 ### Enumeration
 - `uname -a`
-- `sudo -l`
+- check what we can sudo: `sudo -l`
 - `whoami`
 - show distrubution version:`lsb_release -a`
 - show current shell: `echo $0`
