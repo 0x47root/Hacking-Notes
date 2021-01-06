@@ -80,6 +80,7 @@
 - Background: `Ctrl + Z`
 - `stty raw -echo; fg`
 - Note that if the shell dies, any input in your own terminal will not be visible. To fix this, type `reset` and press enter.
+- Other way to upgrade a shell is to generate an SSH keypair with `ssh-keygen` and leave the public SSH key in ~/.ssh/authorized_keys and use the private key to login via SSH: `ssh -i id_rsa username@10.0.0.1`
 
 #### Test command execution
 - start tcpdump listener for ICMP: `sudo tcpdump ip proto \\icmp -i tun0`
@@ -343,6 +344,16 @@ Some other important instructions:
 ### Disassembly tools for .NETFramework applications
 - ILSpy
 - Dotpeek
+
+# Crypto
+
+## RSA
+- goeie tool: https://github.com/Ganapati/RsaCtfTool
+- ook een goeie: https://github.com/ius/rsatool
+- p en q zijn grote priemgetallen
+- n is het product van p en q
+- The public key is n and d, the private key is n and e.
+- “m” is used to represent the message (in plaintext) and “c” represents the ciphertext (encrypted text).
 
 ## Other tricks
 - Create files in /dev/shm. This is empied during reboot, so you don’t have to clean up.
