@@ -355,7 +355,11 @@ Some other important instructions:
 - The public key is n and d, the private key is n and e.
 - “m” is used to represent the message (in plaintext) and “c” represents the ciphertext (encrypted text).
 
-## Other tricks
+## GPG
+- import private key: `gpg --import file.key`
+- decrypt message: `gpg --decrypt message.gpg`
+
+# Other tricks
 - Create files in /dev/shm. This is empied during reboot, so you don’t have to clean up.
 - Output errors to the ‘bitbucket’ 2>/dev/null
 - Back to previous folder: `cd -`
