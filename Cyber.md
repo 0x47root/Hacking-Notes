@@ -416,16 +416,17 @@ Some other important instructions:
 
 ### Decrypting hashes
 - `john hash.txt`
-
-### cURL
-- get request: `curl http://10.10.171.117:8081/ctf/get`
-- post request with data in body: `curl -X POST --data "flag_please" http://10.10.171.117:8081/ctf/post`
-- post request with headers: `curl -X POST -F 'name=linuxize' -F 'email=linuxize@example.com' https://example.com/contact.php`
+- example hashes: https://hashcat.net/wiki/doku.php?id=example_hashes
 
 ### Password cracking websites
 - https://crackstation.net/
 - https://md5decrypt.net/en/
 - https://hashes.com/en/decrypt/hash
+
+### cURL
+- get request: `curl http://10.10.171.117:8081/ctf/get`
+- post request with data in body: `curl -X POST --data "flag_please" http://10.10.171.117:8081/ctf/post`
+- post request with headers: `curl -X POST -F 'name=linuxize' -F 'email=linuxize@example.com' https://example.com/contact.php`
 
 ### XML External Entity (XXE)
 XXE Test:
