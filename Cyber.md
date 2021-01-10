@@ -4,6 +4,7 @@
 
 ### Nmap Scan
 - `nmap -sC -sV nmap 10.10.10.14 > nmap_scan`
+- vulnerability scan: `nmap -sV -sC --script vuln 10.10.4.35`
 - SYN/Stealth scan: `nmap -sS <target>`
 - Most common UDP ports scan (takes longer than TCP): `nmap -sU --top-ports 20 <target>`
 - Ping sweet (network host discovery): `nmap -sn 192.168.0.0/24` or `nmap -sn 192.168.0.1-254`
@@ -278,11 +279,6 @@
 - /var/log/syslog (system events such as firewall alerts)
 - /var/log/[service] (for example /var/log/apache2)
 
-## Metasploit
-
-### Meterpreter
-- Post exploit recon for vulnerabilities: `run post/multi/recon/local_exploit_suggester SHOWDESCRIPTION=true`
-
 ## Forensics
 
 ### Memory
@@ -461,3 +457,25 @@ Output file contents:
 - list all groups: `Get-NetGroup -GroupName *`
 - account information for domain admins: `Get-NetUser -SPN | ?{$_.memberof -match 'Domain Admins'}`
 - Powerview cheat sheet: https://gist.github.com/HarmJ0y/184f9822b195c52dd50c379ed3117993
+
+# Metasploit
+- save used commands to file: `spool`
+- save set variables to file in msfx folder: `save`
+
+## Metasploit Database
+- buiten msfconsole: `msfdb init`
+- show database status in msfconsole: `db_status`
+- nmap scan resultaten naar db: `db_nmap -sV 10.10.21.140`
+- show scanned hosts: `hosts`
+- show scanned services: `services`
+- show found vulnerabilities: `vulns`
+- show running jobs: `jobs`
+- show active sessions: `sessions`
+- switch session: `sessions -i SESSION_NUMBER`
+
+## Meterpreter
+- list processes: `ps`
+- enumeration: `getuid` `sysinfo`
+- Post exploit recon for vulnerabilities: `run post/multi/recon/local_exploit_suggester SHOWDESCRIPTION=true`
+- forcing RDP on a Windows machine: `run post/windows/manage/enable_rdp`
+- adding a route: `run autoroute -s 172.18.1.0 -n 255.255.255.0`
