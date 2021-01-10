@@ -449,3 +449,15 @@ Output file contents:
 ### Using Null Byte for blocked file extensions
 - Null Byte: `%00`, URL encoded: `%2500`
 - if only .md files can be uploaded: `http://10.10.250.194/ftp/package.json.bak%2500.md`
+
+# Active Directory
+- Location of NTDS.dit (holds DC info and password hashes): `%SystemRoot%\NTDS`
+- From Windows terminal to Powershell: `powershell -ep bypass`
+
+## PowerView
+- import PowerView module: `. .\PowerView.ps1`
+- list app Operating Systems on domain: `Get-NetComputer -fulldata | select operatingsystem`
+- list all users on domain: `Get-NetUser | select cn`
+- list all groups: `Get-NetGroup -GroupName *`
+- account information for domain admins: `Get-NetUser -SPN | ?{$_.memberof -match 'Domain Admins'}`
+- Powerview cheat sheet: https://gist.github.com/HarmJ0y/184f9822b195c52dd50c379ed3117993
