@@ -1,5 +1,5 @@
 # Hacking Notes
-Random notes I've made while learning about hacking that may prove useful in the future.
+Random notes I've made while learning about hacking that might prove useful in the future.
 
 ## Nmap
 - `nmap -sC -sV nmap 10.10.10.14 > nmap_scan`
