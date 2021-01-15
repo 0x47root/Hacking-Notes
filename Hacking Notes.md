@@ -212,6 +212,10 @@ Random notes I've made while learning about hacking that might prove useful in t
 
 ### PrivEsc Enumeration
 - `uname -a`
+- `cat ~/.bash_history`
+- find important file or process: `cat ~/.bash_profile`
+- find important file or process: `cat ~/.bashrc`
+- `sudo -V` (< 1.8.28 are vulnerable to CVE-2019-14287)'
 - check what we can sudo: `sudo -l`
 - `whoami` and `id`
 - show distrubution version:`lsb_release -a`
