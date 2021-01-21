@@ -385,6 +385,12 @@ Some other important instructions:
 ## Decrypting hashes
 - `john hash.txt`
 - example hashes: https://hashcat.net/wiki/doku.php?id=example_hashes
+- search formats: `john --list=formats | grep -i 'md5'`
+- crack: `john --format=raw-sha1 --wordlist=/usr/share/wordlists/rockyou.txt hash.txt`
+
+### Identify hashes
+- `wget https://gitlab.com/kalilinux/packages/hash-identifier/-/raw/kali/master/hash-id.py`
+- `python3 hash-identifier.py`
 
 ## Password cracking websites
 - https://crackstation.net/
@@ -467,6 +473,12 @@ Output file contents:
 - `has_screenshot=true port:554`
 - maps.shodan.io
 - images.shodan.io
+
+### Shodan dorks
+- find pc's infected with ransomware: `has_screenshot:true encrypted attention`
+- industrial control systems: `screenshot.label:ics`
+- devices vulnerable to heartbleed: `vuln:CVE-2014-0160`
+- https://github.com/humblelad/Shodan-Dorks
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 # Windows
 - possible stored credentials: `C:\Program Files\FileZilla Server\FileZilla Server.xml`
