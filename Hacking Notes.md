@@ -459,6 +459,14 @@ Output file contents:
 
 ## RDP
 - connect via RDP: `xfreerdp /u:user /p:password321 /cert:ignore /v:10.10.225.187`
+
+## Shodan
+- lookup ASN for large companies: https://www.ultratools.com/tools/asnInfo
+- find IP addresses belonging to ASN (behind proxies like Cloudflare): `asn:AS14061`
+- find devices vulnerable to eternal blue: `vuln:ms17-010`
+- `has_screenshot=true port:554`
+- maps.shodan.io
+- images.shodan.io
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 # Windows
 - possible stored credentials: `C:\Program Files\FileZilla Server\FileZilla Server.xml`
