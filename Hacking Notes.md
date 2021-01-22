@@ -293,6 +293,7 @@ Random notes I've made while learning about hacking that might prove useful in t
 - find shared `sudo enum4linux -S 10.5.4.2`
 - connect to share `sudo smbclient //10.5.4.2//sharename`
 - sometimes no password is needed
+- recursively download share contents: `smbget -R smb://<ip>/<sharename>`
 
 ## Important log files
 - /var/log/auth.log (attempted logins for SSH, changes too or logging in as system users)
