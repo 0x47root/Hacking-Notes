@@ -382,7 +382,7 @@ Some other important instructions:
 ## Additional Kali downloads
 - Download useful lists from Seclists: `sudo apt install seclists`
 
-## Decrypting hashes
+## Decrypting hashes with john the ripper
 - `john hash.txt`
 - example hashes: https://hashcat.net/wiki/doku.php?id=example_hashes
 - search formats: `john --list=formats | grep -i 'md5'`
@@ -391,6 +391,18 @@ Some other important instructions:
 ### Identify hashes
 - `wget https://gitlab.com/kalilinux/packages/hash-identifier/-/raw/kali/master/hash-id.py`
 - `python3 hash-identifier.py`
+
+### /etc/passwd hashes
+- `unshadow [path to passwd] [path to shadow] > unshadowed.txt`
+- `john --wordlist=/usr/share/wordlists/rockyou.txt --format=sha512crypt unshadowed.txt`
+
+### Single cracking based on username:
+- hash.txt: `username:hash`
+- `john --single --format=[format] [path to file]`
+
+### Password protected zip files (same with rar)
+- `zip2john file.zip > hash.txt`
+- `john --wordlist=[wordlist] hash.txt`
 
 ## Password cracking websites
 - https://crackstation.net/
