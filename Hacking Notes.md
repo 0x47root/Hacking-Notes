@@ -406,11 +406,6 @@ Some other important instructions:
 - `zip2john file.zip > hash.txt`
 - `john --wordlist=[wordlist] hash.txt`
 
-## Password cracking websites
-- https://crackstation.net/
-- https://md5decrypt.net/en/
-- https://hashes.com/en/decrypt/hash
-
 ## cURL
 - get request: `curl http://10.10.171.117:8081/ctf/get`
 - post request with data in body: `curl -X POST --data "flag_please" http://10.10.171.117:8081/ctf/post`
