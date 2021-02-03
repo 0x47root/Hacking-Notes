@@ -1,6 +1,11 @@
 # Hacking Notes
 Random notes I've made while learning about hacking that might prove useful in the future.
 
+## HTB
+- handige commands:
+- `echo "10.10.10.206 passage.htb" | sudo tee -a /etc/hosts; ping passage.htb`
+- `nmap -p- -sC -sV --min-rate 1000 passage.htb | tee nmap`
+
 ## Nmap
 - `nmap -sC -sV nmap 10.10.10.14 > nmap_scan`
 - vulnerability scan: `nmap -sV -sC --script vuln 10.10.4.35`
