@@ -381,8 +381,12 @@ Some other important instructions:
 - crack: `john --format=raw-sha1 --wordlist=/usr/share/wordlists/rockyou.txt hash.txt`
 
 ### Identify hashes
+- `hashid hash.txt`
 - `wget https://gitlab.com/kalilinux/packages/hash-identifier/-/raw/kali/master/hash-id.py`
 - `python3 hash-identifier.py`
+
+### Hashcat
+- `hashcat -m 1400 hash.txt /usr/share/Seclists/Passwords/*`
 
 ### /etc/passwd hashes
 - `unshadow [path to passwd] [path to shadow] > unshadowed.txt`
