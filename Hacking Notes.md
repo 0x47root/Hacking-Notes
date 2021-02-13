@@ -236,6 +236,7 @@ Random notes I've made while learning about hacking that might prove useful in t
 - add the following: `[username]:[hash]:0:0:root:/root:/bin/bash`
 
 ### Malicious binary for SUID binary with PATH variable
+- check what binaries a script runs: `ltrace <filename>`
 - example: script runs 'ls' as root
 - `cd /tmp`
 - `echo "/bin/bash" > ls`
